@@ -5,6 +5,12 @@ terraform {
       version = "=3.0.0"
     }
   }
+  cloud {
+    organization = "laurence"
+    workspaces {
+      name = "laurence-cloud-state"
+    }
+  }
 }
 
 # Configure the Microsoft Azure Provider
@@ -121,5 +127,18 @@ resource "azurerm_linux_virtual_machine" "laurence-vm" {
     offer     = "UbuntuServer"
     sku       = "18.04-LTS"
     version   = "latest"
+  }
+
+  provisioner "local-exec" {
+    command = templatefile("windows-ssh-script.tpl", {
+      hostname     = self.public_ip_address,
+      user         = "laurence.nairne",
+      identityfile = "~/.ssh/azure-vm-key_rsa"
+    })
+    interpreter = ["Powershell", "-Command"]
+  }
+
+  tags = {
+    environment = "dev"
   }
 }
