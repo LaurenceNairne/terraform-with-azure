@@ -5,6 +5,9 @@
 *.tfstate
 *.tfstate.*
 
+#.tpl files
+windows-ssh-script.tpl
+
 # Crash log files
 crash.log
 
