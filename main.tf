@@ -55,9 +55,9 @@ resource "azurerm_network_security_rule" "laurence-dev-nsr" {
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "*"
-  source_port_range           = "22"
+  source_port_range           = "*"
   destination_port_range      = "22"
-  source_address_prefix       = "192.168.0.0/24"
+  source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.laurence-rg.name
   network_security_group_name = azurerm_network_security_group.laurence-nsg.name
@@ -103,6 +103,8 @@ resource "azurerm_linux_virtual_machine" "laurence-vm" {
   size                  = "Standard_B1s"
   admin_username        = "laurence.nairne"
   network_interface_ids = [azurerm_network_interface.laurence-nic.id]
+
+  custom_data = filebase64("customdata.tpl")
 
   admin_ssh_key {
     username   = "laurence.nairne"
