@@ -8,7 +8,7 @@ terraform {
   cloud {
     organization = "laurence"
     workspaces {
-      name = "laurence-cloud-state"
+      name = "terraform-gh-actions"
     }
   }
 }
@@ -16,7 +16,13 @@ terraform {
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
   features {}
+  client_id var.client_id
+  subscription_id var.subscription_id
+  tenant_id var.tenant_id
+  client_secret var.client_secret
 }
+
+data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "laurence-rg" {
   name     = "laurence-rg"
@@ -128,15 +134,6 @@ resource "azurerm_linux_virtual_machine" "laurence-vm" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
-
-  # provisioner "local-exec" {
-  #   command = templatefile("windows-ssh-script.tpl", {
-  #     hostname     = self.public_ip_address,
-  #     user         = "laurence.nairne",
-  #     identityfile = "~/.ssh/azure-vm-key_rsa"
-  #   })
-  #   interpreter = ["Powershell", "-Command"]
-  # }
 
   tags = {
     environment = "dev"
