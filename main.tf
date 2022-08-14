@@ -16,10 +16,10 @@ terraform {
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
   features {}
-  client_id       = TF_VARS_ARM_CLIENT_ID
-  subscription_id = TF_VARS_ARM_SUBSCRIPTION_ID
-  tenant_id       = TF_VARS_ARM_TENANT_ID
-  client_secret   = TF_VARS_ARM_CLIENT_SECRET
+  client_id       = TF_VAR_ARM_CLIENT_ID
+  subscription_id = TF_VAR_ARM_SUBSCRIPTION_ID
+  tenant_id       = TF_VAR_ARM_TENANT_ID
+  client_secret   = TF_VAR_ARM_CLIENT_SECRET
 }
 
 data "azurerm_client_config" "current" {}
