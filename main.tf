@@ -114,7 +114,7 @@ resource "azurerm_linux_virtual_machine" "laurence-vm" {
 
   admin_ssh_key {
     username   = "laurence.nairne"
-    public_key = file("~/.ssh/azure-vm-key_rsa.pub")
+    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDosoCASr7Zy+KPZntem3vMcdYgshVeLleDXjpvGmRIqCP4lqGesr9OUYN/9kIdUZy7buBS/7YPEZkA86R40PU3JqtqMfT1TVm0NKuWY9Q7RjHDmQ8w3L62rXUYaOpV66FEBdGAPJ+OmS3FjEnAXuV+TzX81ZGiRf8edxEfZ7foJXc8+Gtl0i1/TYLL+CjVMmjBhPTa4/C7rpXe+Fei8gx/Q3tZ9sZGit9G8iVNnY37u0UbzAlOog2NvLshZq+dvoeEyfYqq8GZEkn3kEHEbMlfWKZ9ARQGm7Cwx7PI1kAHnycRZm+z0eCkOJ3jVD6bPUIS9WI4Qhi+QPgxo44fqQ4EYEwLdMLJ+KE40EIQ0vq6ZX2lUfMvonbs9SdGApk79p86by3tXWwaCL5sS2h1WinnS+9pk3ep626K2xv/lWRHAlO7AGpmuj+NKHeZ+GywvvdsSnApsEyiGCO/Xer0oQeyMBKZOLcjF4fmY77Le80eRi5HhYeHOKvfVDSkarJwRHgP6e2/whRKz6EQmhkkQSJZhKn5YRYDp1C+k7OG/PZE0WewRKpqJ94dmldd1Ur00Umvc6WOLvKQxCODWvfRlYzF4T+lJpArZbkcsPN+9Z8M04Hhm4r6B6d+W7i7Ry+TAjCturMYBMZn16cE4c1fsfUYUJaZNYeE7gMtSzDnS9hXqw== Azure Linux VM"
   }
 
   os_disk {
