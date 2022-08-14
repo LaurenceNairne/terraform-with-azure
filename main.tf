@@ -110,7 +110,7 @@ resource "azurerm_linux_virtual_machine" "laurence-vm" {
   name                  = "laurence-vm"
   resource_group_name   = azurerm_resource_group.laurence-rg.name
   location              = azurerm_resource_group.laurence-rg.location
-  size                  = "Standard_B1s"
+  size                  = "Standard_B1ls2"
   admin_username        = "laurence.nairne"
   network_interface_ids = [azurerm_network_interface.laurence-nic.id]
 
