@@ -16,13 +16,11 @@ terraform {
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
   features {}
-  client_id       = TF_VAR_ARM_CLIENT_ID
-  subscription_id = TF_VAR_ARM_SUBSCRIPTION_ID
-  tenant_id       = TF_VAR_ARM_TENANT_ID
-  client_secret   = TF_VAR_ARM_CLIENT_SECRET
+  client_id       = var.ARM_CLIENT_ID
+  subscription_id = var.ARM_SUBSCRIPTION_ID
+  tenant_id       = var.ARM_TENANT_ID
+  client_secret   = var.ARM_CLIENT_SECRET
 }
-
-data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "laurence-rg" {
   name     = "laurence-rg"

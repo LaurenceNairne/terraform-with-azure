@@ -37,7 +37,7 @@ jobs:
 
     - name: 'Terraform Init'
       id: init
-      run: terraform init
+      run: terraform init -no-colour
 
     - name: 'Terraform Format'
       id: fmt
