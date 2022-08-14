@@ -129,14 +129,14 @@ resource "azurerm_linux_virtual_machine" "laurence-vm" {
     version   = "latest"
   }
 
-  provisioner "local-exec" {
-    command = templatefile("windows-ssh-script.tpl", {
-      hostname     = self.public_ip_address,
-      user         = "laurence.nairne",
-      identityfile = "~/.ssh/azure-vm-key_rsa"
-    })
-    interpreter = ["Powershell", "-Command"]
-  }
+  # provisioner "local-exec" {
+  #   command = templatefile("windows-ssh-script.tpl", {
+  #     hostname     = self.public_ip_address,
+  #     user         = "laurence.nairne",
+  #     identityfile = "~/.ssh/azure-vm-key_rsa"
+  #   })
+  #   interpreter = ["Powershell", "-Command"]
+  # }
 
   tags = {
     environment = "dev"
