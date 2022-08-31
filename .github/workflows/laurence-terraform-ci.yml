@@ -41,9 +41,16 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    - name: 'Terraform Plan'
-      id: plan
-      run: terraform plan -no-color
+    - name: 'Terraform Plan Development'
+      if: github.ref != 'refs/heads/main'
+      id: plandev
+      run: terraform plan -no-color -var-file=development.auto.tfvars
+      continue-on-error: true
+
+    - name: 'Terraform Plan Production'
+      if: github.ref == 'refs/heads/main'
+      id: planprod
+      run: terraform plan -no-color -var-file=production.auto.tfvars
       continue-on-error: true
 
     # Just a comment to have something to merge
@@ -51,13 +58,13 @@ jobs:
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
       env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        PLAN: "terraform\n${{ steps.plandev.outputs.stdout }}"
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          #### Terraform Plan 📖\`${{ steps.plandev.outcome }}\`
           #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
 
           <details><summary>Show Plan</summary>
@@ -78,7 +85,7 @@ jobs:
           })
     
     - name: 'Terraform Plan Result'
-      if: steps.plan.outcome == 'failure'
+      if: steps.plandev.outcome == 'failure'
       run: exit 1
 
     - name: 'Terraform Apply Development'
