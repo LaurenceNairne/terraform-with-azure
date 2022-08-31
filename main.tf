@@ -13,7 +13,6 @@ terraform {
   }
 }
 
-# Configure the Microsoft Azure Provider
 provider "azurerm" {
   features {}
   client_id       = var.ARM_CLIENT_ID
@@ -23,44 +22,44 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "laurence-rg" {
-  name     = "laurence-rg"
+  name     = "laurence-rg-${var.environment}"
   location = "UK South"
 
   tags = {
-    environment = "dev"
+    environment = var.environment
   }
 }
 
 resource "azurerm_virtual_network" "laurence-vn" {
-  name                = "laurence-vn"
+  name                = "laurence-vn-${var.environment}"
   location            = azurerm_resource_group.laurence-rg.location
   resource_group_name = azurerm_resource_group.laurence-rg.name
   address_space       = ["10.123.0.0/16"]
 
   tags = {
-    environment = "dev"
+    environment = var.environment
   }
 }
 
 resource "azurerm_subnet" "laurence-subnet" {
-  name                 = "laurence-subnet"
+  name                 = "laurence-subnet-${var.environment}"
   resource_group_name  = azurerm_resource_group.laurence-rg.name
   virtual_network_name = azurerm_virtual_network.laurence-vn.name
   address_prefixes     = ["10.123.1.0/24"]
 }
 
 resource "azurerm_network_security_group" "laurence-nsg" {
-  name                = "laurence-nsg"
+  name                = "laurence-nsg-${var.environment}"
   location            = azurerm_resource_group.laurence-rg.location
   resource_group_name = azurerm_resource_group.laurence-rg.name
 
   tags = {
-    environment = "dev"
+    environment = var.environment
   }
 }
 
-resource "azurerm_network_security_rule" "laurence-dev-nsr" {
-  name                        = "laurence-dev-nsr"
+resource "azurerm_network_security_rule" "laurence-nsr" {
+  name                        = "laurence-nsr-${var.environment}"
   priority                    = 100
   direction                   = "Inbound"
   access                      = "Allow"
@@ -79,18 +78,18 @@ resource "azurerm_subnet_network_security_group_association" "laurence-ssga" {
 }
 
 resource "azurerm_public_ip" "laurence-ip" {
-  name                = "laurence-ip"
+  name                = "laurence-ip-${var.environment}"
   resource_group_name = azurerm_resource_group.laurence-rg.name
   location            = azurerm_resource_group.laurence-rg.location
   allocation_method   = "Dynamic"
 
   tags = {
-    environment = "dev"
+    environment = var.environment
   }
 }
 
 resource "azurerm_network_interface" "laurence-nic" {
-  name                = "laurence-nic"
+  name                = "laurence-nic-${var.environment}"
   location            = azurerm_resource_group.laurence-rg.location
   resource_group_name = azurerm_resource_group.laurence-rg.name
 
@@ -102,15 +101,15 @@ resource "azurerm_network_interface" "laurence-nic" {
   }
 
   tags = {
-    environment = "dev"
+    environment = var.environment
   }
 }
 
 resource "azurerm_linux_virtual_machine" "laurence-vm" {
-  name                  = "laurence-vm"
+  name                  = "laurence-vm-${var.environment}"
   resource_group_name   = azurerm_resource_group.laurence-rg.name
   location              = azurerm_resource_group.laurence-rg.location
-  size                  = "Standard_B1ls"
+  size                  = var.vm_size
   admin_username        = "laurence.nairne"
   network_interface_ids = [azurerm_network_interface.laurence-nic.id]
 
@@ -123,7 +122,7 @@ resource "azurerm_linux_virtual_machine" "laurence-vm" {
 
   os_disk {
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+    storage_account_type = var.vm_stg_account
   }
 
   source_image_reference {
@@ -134,6 +133,6 @@ resource "azurerm_linux_virtual_machine" "laurence-vm" {
   }
 
   tags = {
-    environment = "dev"
+    environment = var.environment
   }
 }
