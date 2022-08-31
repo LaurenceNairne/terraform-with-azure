@@ -29,6 +29,10 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+    - name: 'Terraform Workspace Select'
+      id: workspace
+      run: terraform workspace select laurence-development
+
     - name: 'Terraform Init'
       id: init
       run: terraform init -no-color
