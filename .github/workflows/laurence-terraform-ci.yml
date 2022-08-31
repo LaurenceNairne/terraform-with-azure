@@ -83,8 +83,8 @@ jobs:
 
     - name: 'Terraform Apply Development'
       if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false -var-file=env_development.tfvars
+      run: terraform apply -auto-approve -input=false -var-file=development.auto.tfvars
     
     - name: 'Terraform Apply Production'
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false -var-file=env_production.tfvars
+      run: terraform apply -auto-approve -input=false -var-file=production.auto.tfvars
