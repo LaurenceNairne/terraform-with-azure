@@ -41,9 +41,16 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    - name: 'Terraform Plan'
+    - name: 'Terraform Plan Development'
+      if: github.ref != 'refs/heads/main'
       id: plan
-      run: terraform plan -no-color
+      run: terraform plan -no-color -var-file=development.auto.tfvars
+      continue-on-error: true
+
+    - name: 'Terraform Plan Production'
+      if: github.ref == 'refs/heads/main'
+      id: plan
+      run: terraform plan -no-color -var-file=production.auto.tfvars
       continue-on-error: true
 
     # Just a comment to have something to merge
