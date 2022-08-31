@@ -27,13 +27,11 @@ variable "ARM_CLIENT_SECRET" {
 variable "vm_size" {
   description = "The tier of VM being provisioned"
   type        = string
-  default     = "Standard_B1ls"
 }
 
 variable "vm_stg_account" {
   description = "The storage account type for the VM"
   type        = string
-  default     = "Standard_LRS"
 }
 
 variable "environment" {
