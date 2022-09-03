@@ -24,17 +24,17 @@ variable "ARM_CLIENT_SECRET" {
 }
 
 ## RESOURCES ##
-variable "vm_size" {
+variable "VM_SIZE" {
   description = "The tier of VM being provisioned"
   type        = string
 }
 
-variable "vm_stg_account" {
+variable "VM_STG_ACC_TYPE" {
   description = "The storage account type for the VM"
   type        = string
 }
 
-variable "environment" {
+variable "ENVIRONMENT" {
   description = "The value for the env tag on resources"
   type        = string
   default     = ""
