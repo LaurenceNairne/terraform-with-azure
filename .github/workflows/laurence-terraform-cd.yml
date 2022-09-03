@@ -1,0 +1,64 @@
+name: CD
+
+on:
+  push:
+    branches: [ 'main' ]
+
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    env:
+      TF_VAR_ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+      TF_VAR_ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+      TF_VAR_ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+    runs-on: ubuntu-latest
+    environment: development
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: hashicorp/setup-terraform@v2
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - name: 'Terraform Init'
+      id: init
+      run: export TF_WORKSPACE="laurence-production" && terraform init -no-color -input=false
+
+    - name: 'Terraform Format'
+      id: fmt
+      run: terraform fmt -check
+
+    - name: 'Terraform Validate'
+      id: validate
+      run: terraform validate -no-color
+
+    - name: 'Terraform Plan'
+      id: plan
+      run: export TF_WORKSPACE="laurence-production" && terraform plan -no-color -input=false
+      continue-on-error: true
+
+    - name: 'Terraform Plan Result'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const output = `#### Terraform Format and Style 🖌: ${{ steps.fmt.outcome }}
+          #### Terraform Initialization ⚙️: ${{ steps.init.outcome }}
+          #### Terraform Plan 📖: ${{ steps.plan.outcome }}
+          #### Terraform Validation 🤖: ${{ steps.validate.outcome }}
+
+          Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }}`;
+
+    - name: 'Terraform Plan Failure'
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
+
+    - name: 'Terraform Apply'
+      run: export TF_WORKSPACE="laurence-production" && terraform apply -auto-approve -input=false

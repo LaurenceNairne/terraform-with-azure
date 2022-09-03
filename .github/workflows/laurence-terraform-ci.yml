@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "develop", "main" ]
+    branches: [ 'develop' ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ 'develop' ]
 
   workflow_dispatch:
 
@@ -31,7 +31,7 @@ jobs:
 
     - name: 'Terraform Init'
       id: init
-      run: terraform init -no-color
+      run: export TF_WORKSPACE="laurence-development" && terraform init -no-color -input=false
 
     - name: 'Terraform Format'
       id: fmt
@@ -41,30 +41,22 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    - name: 'Terraform Plan Development'
-      if: github.ref != 'refs/heads/main'
-      id: plandev
-      run: terraform plan -no-color -var-file=development.auto.tfvars
+    - name: 'Terraform Plan'
+      id: plan
+      run: export TF_WORKSPACE="laurence-development" && terraform plan -no-color -input=false
       continue-on-error: true
 
-    - name: 'Terraform Plan Production'
-      if: github.ref == 'refs/heads/main'
-      id: planprod
-      run: terraform plan -no-color -var-file=production.auto.tfvars
-      continue-on-error: true
-
-    # Just a comment to have something to merge
     - name: 'Update Pull Request'
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
       env:
-        PLAN: "terraform\n${{ steps.plandev.outputs.stdout }}"
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Plan 📖\`${{ steps.plandev.outcome }}\`
+          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
           #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
 
           <details><summary>Show Plan</summary>
@@ -83,15 +75,20 @@ jobs:
             repo: context.repo.repo,
             body: output
           })
-    
+
     - name: 'Terraform Plan Result'
-      if: steps.plandev.outcome == 'failure'
+      if: steps.plan.outcome == 'failure'
       run: exit 1
 
-    - name: 'Terraform Apply Development'
+    - name: 'Terraform Apply'
       if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false -var-file=development.auto.tfvars
-    
-    - name: 'Terraform Apply Production'
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false -var-file=production.auto.tfvars
+      run: export TF_WORKSPACE="laurence-development" && terraform apply -auto-approve -input=false
+
+    - name: 'Merge develop -> main'
+      if: github.ref == 'refs/heads/develop'
+      uses: devmasx/merge-branch@master
+      with:
+        type: now
+        from_branch: develop
+        target_branch: main
+        github_token: ${{ secrets.GITHUB_TOKEN }}
