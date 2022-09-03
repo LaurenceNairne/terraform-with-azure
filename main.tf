@@ -1,3 +1,4 @@
+# Needless comment to trigger change
 terraform {
   required_providers {
     azurerm = {
