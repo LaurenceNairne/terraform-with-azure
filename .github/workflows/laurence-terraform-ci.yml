@@ -16,6 +16,7 @@ jobs:
       TF_VAR_ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       TF_VAR_ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
       TF_VAR_ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+      TF_WORKSPACE: 'laurence-development'
     runs-on: ubuntu-latest
     environment: development
 
@@ -31,7 +32,7 @@ jobs:
 
     - name: 'Terraform Init'
       id: init
-      run: export TF_WORKSPACE="laurence-development" && terraform init -no-color -input=false
+      run: terraform init -no-color -input=false
 
     - name: 'Terraform Format'
       id: fmt
@@ -43,7 +44,7 @@ jobs:
 
     - name: 'Terraform Plan'
       id: plan
-      run: export TF_WORKSPACE="laurence-development" && terraform plan -no-color -input=false
+      run: terraform plan -no-color -input=false
       continue-on-error: true
 
     - name: 'Update Pull Request'
@@ -82,7 +83,7 @@ jobs:
 
     - name: 'Terraform Apply'
       if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-      run: export TF_WORKSPACE="laurence-development" && terraform apply -auto-approve -input=false
+      run: terraform apply -auto-approve -input=false
 
     - name: 'Merge develop -> main'
       if: github.ref == 'refs/heads/develop'
