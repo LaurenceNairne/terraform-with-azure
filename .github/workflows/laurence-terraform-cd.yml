@@ -29,7 +29,7 @@ jobs:
 
     - name: 'Terraform Init'
       id: init
-      run: export TF_WORKSPACE="laurence-development" && terraform init -no-color -input=false
+      run: export TF_WORKSPACE="laurence-production" && terraform init -no-color -input=false
 
     - name: 'Terraform Format'
       id: fmt
@@ -41,7 +41,7 @@ jobs:
 
     - name: 'Terraform Plan'
       id: plan
-      run: terraform plan -no-color -input=false
+      run: export TF_WORKSPACE="laurence-production" && terraform plan -no-color -input=false
       continue-on-error: true
 
     - name: 'Terraform Plan Result'
@@ -61,4 +61,4 @@ jobs:
       run: exit 1
 
     - name: 'Terraform Apply'
-      run: terraform apply -auto-approve -input=false
+      run: export TF_WORKSPACE="laurence-production" && terraform apply -auto-approve -input=false

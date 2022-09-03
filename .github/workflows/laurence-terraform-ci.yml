@@ -43,7 +43,7 @@ jobs:
 
     - name: 'Terraform Plan'
       id: plan
-      run: terraform plan -no-color -input=false
+      run: export TF_WORKSPACE="laurence-development" && terraform plan -no-color -input=false
       continue-on-error: true
 
     - name: 'Update Pull Request'
@@ -82,7 +82,7 @@ jobs:
 
     - name: 'Terraform Apply'
       if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false
+      run: export TF_WORKSPACE="laurence-development" && terraform apply -auto-approve -input=false
 
     - name: 'Merge develop -> main'
       if: github.ref == 'refs/heads/develop'
